@@ -1,0 +1,46 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --color-medium-blue: #145da0;
+  --color-light-blue: #56a8ff;
+  --color-white: #ffffff;
+  --color-dark-navy: #051d40;
+  --color-pale-sky-blue: #b1d4e0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-pale-sky-blue);
+  color: var(--color-dark-navy);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  color: var(--color-medium-blue);
+}
+
+.btn {
+  @apply px-4 py-2 rounded-lg font-semibold transition-all duration-300 ease-in-out;
+}
+
+.btn-primary {
+  @apply bg-medium-blue text-white hover:bg-light-blue;
+}
+
+.btn-secondary {
+  @apply bg-pale-sky-blue text-dark-navy hover:bg-light-blue hover:text-white;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-lg p-6 transition-all duration-300 ease-in-out hover:shadow-xl;
+}
+
+.input {
+  @apply border-2 border-pale-sky-blue rounded-lg px-4 py-2 focus:outline-none focus:border-medium-blue transition-all duration-300 ease-in-out;
+}
+
+.select {
+  @apply border-2 border-pale-sky-blue rounded-lg px-4 py-2 focus:outline-none focus:border-medium-blue transition-all duration-300 ease-in-out appearance-none bg-white;
+}
