@@ -15,6 +15,7 @@ function App() {
         <Route element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="productos" element={<ProductCatalog />} />
+          <Route path="analiticas/:sku" element={<AdvancedAnalytics />} />
           <Route path="analiticas" element={<AdvancedAnalytics />} />
           <Route path="informes" element={<Reports />} />
         </Route>
