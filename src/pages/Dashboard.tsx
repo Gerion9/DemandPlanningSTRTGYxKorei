@@ -29,7 +29,6 @@ ChartJS.register(
 const Dashboard: React.FC = () => {
   const [data, setData] = useState<Product[]>([])
   const [error, setError] = useState<string | null>(null)
-  const [lastUpdateDate] = useState<string>(new Date().toLocaleDateString('es-ES'))
 
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
