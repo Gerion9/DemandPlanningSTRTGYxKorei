@@ -159,7 +159,7 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <KPICard
           title="Última Actualización"
-          value={lastUpdateDate}
+          value="20/12/2024"
           icon={<ClockIcon className="w-6 h-6" />}
         />
         <KPICard
