@@ -230,19 +230,19 @@ const AdvancedAnalytics: React.FC = () => {
               let value = context.parsed.y;
               
               if (label === 'Ventas Históricas' && value !== null) {
-                return `📊 ${label}: ${value.toFixed(2)} unidades`;
+                return `📊 ${label}: ${Math.round(value)} unidades`;
               }
               if (label === 'Pronóstico' && value !== null) {
-                return `🎯 ${label}: ${value.toFixed(2)} unidades`;
+                return `🎯 ${label}: ${Math.round(value)} unidades`;
               }
               if (label === 'Stock de Seguridad') {
-                return `🛡️ ${label}: ${value.toFixed(2)} unidades`;
+                return `🛡️ ${label}: ${Math.round(value)} unidades`;
               }
               if (label === 'Punto de Reorden') {
-                return `⚡ ${label}: ${value.toFixed(2)} unidades`;
+                return `⚡ ${label}: ${Math.round(value)} unidades`;
               }
               if (label === 'Stock Máximo') {
-                return `📦 ${label}: ${value.toFixed(2)} unidades`;
+                return `📦 ${label}: ${Math.round(value)} unidades`;
               }
               return null;
             }
@@ -388,7 +388,7 @@ const AdvancedAnalytics: React.FC = () => {
               const totalSales = calculateTotalSales(product.Weekly_Sales);
               return (
                 <option key={product.SKU} value={product.SKU}>
-                  {`${product.SKU} (Ventas totales: ${totalSales.toFixed(0)})`}
+                  {`${product.SKU} (Ventas totales: ${Math.round(totalSales)})`}
                 </option>
               );
             })}
@@ -424,7 +424,7 @@ const AdvancedAnalytics: React.FC = () => {
                 📊 Coeficiente de Variación
               </h2>
               <p className="text-lg">
-                {selectedProduct.CV.toFixed(2)}
+                {Math.round(selectedProduct.CV)}
                 <span className="text-sm text-gray-500 ml-2">(CV)</span>
               </p>
             </div>
@@ -519,7 +519,7 @@ const AdvancedAnalytics: React.FC = () => {
                 🛡️ Stock de Seguridad
               </h2>
               <p className="text-lg">
-                {selectedProduct.Stock_Seguridad.toFixed(2)}
+                {Math.round(selectedProduct.Stock_Seguridad)}
                 <span className="text-sm text-gray-500 ml-2">unidades</span>
               </p>
             </div>
@@ -528,7 +528,7 @@ const AdvancedAnalytics: React.FC = () => {
                 ⚡ Punto de Reorden
               </h2>
               <p className="text-lg">
-                {selectedProduct.Punto_Reorden.toFixed(2)}
+                {Math.round(selectedProduct.Punto_Reorden)}
                 <span className="text-sm text-gray-500 ml-2">unidades</span>
               </p>
             </div>
@@ -537,7 +537,7 @@ const AdvancedAnalytics: React.FC = () => {
                 📦 Stock Máximo
               </h2>
               <p className="text-lg">
-                {selectedProduct.Stock_Maximo.toFixed(2)}
+                {Math.round(selectedProduct.Stock_Maximo)}
                 <span className="text-sm text-gray-500 ml-2">unidades</span>
               </p>
             </div>
