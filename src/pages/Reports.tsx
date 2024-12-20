@@ -36,15 +36,15 @@ const Reports: React.FC = () => {
   const formatInventoryData = (data: Product[]) => {
     return data.map(item => ({
       SKU: item.SKU,
-      'Stock de Seguridad': Number(item.Stock_Seguridad || 0).toFixed(2),
-      'Punto de Reorden': Number(item.Punto_Reorden || 0).toFixed(2),
-      'Stock Máximo': Number(item.Stock_Maximo || 0).toFixed(2)
+      'Stock de Seguridad': Math.round(Number(item.Stock_Seguridad || 0)),
+      'Punto de Reorden': Math.round(Number(item.Punto_Reorden || 0)),
+      'Stock Máximo': Math.round(Number(item.Stock_Maximo || 0))
     }));
   };
 
   const parsePronostico = (pronosticoString: string): number[] => {
     const matches = pronosticoString?.match(/\d+(\.\d+)?/g) || [];
-    return matches.map(Number);
+    return matches.map(num => Math.round(Number(num)));
   };
 
   const formatForecastData = (data: Product[]) => {
@@ -111,7 +111,7 @@ const Reports: React.FC = () => {
       };
 
       forecastDates.forEach((date, index) => {
-        baseRow[date] = Number(forecastValues[index]).toFixed(2);
+        baseRow[date] = Math.round(Number(forecastValues[index]));
       });
 
       return baseRow;
@@ -158,7 +158,7 @@ const Reports: React.FC = () => {
 
       const numberStyle = {
         ...dataStyle,
-        numFmt: "#,##0.00",
+        numFmt: "#,##0",
         font: { name: "Calibri", sz: 11, color: { rgb: "000000" } }
       };
 
