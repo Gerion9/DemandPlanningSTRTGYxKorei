@@ -13,6 +13,8 @@ import {
   ChartOptions
 } from 'chart.js'
 import { Product } from '../types'
+import { motion } from 'framer-motion'
+import { ClockIcon, TrendingUpIcon, PackageIcon, DollarSignIcon } from 'lucide-react'
 
 ChartJS.register(
   CategoryScale,
@@ -23,9 +25,11 @@ ChartJS.register(
   Legend
 )
 
+
 const Dashboard: React.FC = () => {
   const [data, setData] = useState<Product[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [lastUpdateDate] = useState<string>(new Date().toLocaleDateString('es-ES'))
 
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
@@ -42,11 +46,19 @@ const Dashboard: React.FC = () => {
   }, [])
 
   if (error) {
-    return <div className="text-red-500 card">{error}</div>
+    return (
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }}
+        className="bg-red-50 text-red-500 rounded-lg p-8 text-center m-6 shadow-lg"
+      >
+        {error}
+      </motion.div>
+    )
   }
 
   if (data.length === 0) {
-    return <div className="card">Cargando...</div>
+    return <LoadingPlaceholder />
   }
 
   const sortedByDemand = [...data].sort((a, b) => b.Demanda_Media_Semanal - a.Demanda_Media_Semanal).slice(0, 10)
@@ -68,9 +80,19 @@ const Dashboard: React.FC = () => {
 
   const chartOptions: ChartOptions<'bar'> = {
     responsive: true,
+    animation: {
+      duration: 1000,
+      easing: 'easeInOutQuart'
+    },
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: 'top',
+        labels: {
+          font: {
+            family: 'Inter',
+            size: 12
+          }
+        }
       },
       title: {
         display: true,
@@ -78,61 +100,180 @@ const Dashboard: React.FC = () => {
         color: '#145da0',
         font: {
           size: 18,
-          weight: 'bold' as const,
-        },
+          weight: 'bold',
+          family: 'Inter'
+        }
       },
+      tooltip: {
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        titleColor: '#145da0',
+        bodyColor: '#051d40',
+        borderColor: '#145da0',
+        borderWidth: 1,
+        padding: 12,
+        displayColors: false,
+        callbacks: {
+          label: (context) => `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`
+        }
+      }
     },
     scales: {
       x: {
+        grid: {
+          display: false
+        },
         ticks: {
           color: '#051d40',
-        },
+          maxRotation: 45,
+          minRotation: 45
+        }
       },
       y: {
+        grid: {
+          color: 'rgba(5, 29, 64, 0.1)'
+        },
         ticks: {
           color: '#051d40',
-        },
-      },
-    },
+          callback: (value) => value.toLocaleString()
+        }
+      }
+    }
   }
 
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-4xl font-bold text-medium-blue mb-8 text-center shadow-sm bg-white py-4 rounded-lg">Panel de Control</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="card">
-          <h2 className="text-xl font-semibold mb-4 text-medium-blue text-center">Demanda Media Semanal Promedio</h2>
-          <p className="text-3xl font-bold text-dark-navy text-center truncate">
-            {(data.reduce((acc, item) => acc + item.Demanda_Media_Semanal, 0) / data.length).toFixed(2)}
-          </p>
-        </div>
-        <div className="card">
-          <h2 className="text-xl font-semibold mb-4 text-medium-blue text-center">Cantidad Total Vendida</h2>
-          <p className="text-3xl font-bold text-dark-navy text-center truncate">
-            {data.reduce((acc, item) => acc + item.Total_Quantity_Sold, 0).toLocaleString()}
-          </p>
-        </div>
-        <div className="card">
-          <h2 className="text-xl font-semibold mb-4 text-medium-blue text-center">Ventas Totales</h2>
-          <p className="text-3xl font-bold text-dark-navy text-center truncate">
-            ${data.reduce((acc, item) => acc + item.Total_Sales, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </p>
-        </div>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-6 p-6"
+    >
+      <motion.h1 
+        initial={{ y: -20 }}
+        animate={{ y: 0 }}
+        className="text-4xl font-bold text-medium-blue mb-8 text-center shadow-sm bg-white py-4 rounded-lg"
+      >
+        Panel de Control
+      </motion.h1>
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <KPICard
+          title="Última Actualización"
+          value={lastUpdateDate}
+          icon={<ClockIcon className="w-6 h-6" />}
+        />
+        <KPICard
+          title="Demanda Media Semanal"
+          value={(data.reduce((acc, item) => acc + item.Demanda_Media_Semanal, 0) / data.length).toFixed(2)}
+          icon={<TrendingUpIcon className="w-6 h-6" />}
+        />
+        <KPICard
+          title="Cantidad Total Vendida"
+          value={data.reduce((acc, item) => acc + item.Total_Quantity_Sold, 0).toLocaleString()}
+          icon={<PackageIcon className="w-6 h-6" />}
+        />
+        <KPICard
+          title="Ventas Totales"
+          value={`$${data.reduce((acc, item) => acc + item.Total_Sales, 0).toLocaleString(undefined, { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+          })}`}
+          icon={<DollarSignIcon className="w-6 h-6" />}
+        />
       </div>
-      <div className="card">
-        <h3 className="text-2xl font-semibold mb-4 text-medium-blue text-center">Top 10 por Demanda Media Semanal</h3>
-        <Bar options={chartOptions} data={createChartData(sortedByDemand, 'Demanda Media Semanal', 'Demanda_Media_Semanal')} />
+
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ChartCard
+          title="Top 10 por Demanda Media Semanal"
+          chart={
+            <Bar 
+              options={chartOptions} 
+              data={createChartData(sortedByDemand, 'Demanda Media Semanal', 'Demanda_Media_Semanal')} 
+            />
+          }
+        />
+        <ChartCard
+          title="Top 10 por Cantidad Vendida"
+          chart={
+            <Bar 
+              options={chartOptions} 
+              data={createChartData(sortedByQuantity, 'Cantidad Vendida', 'Total_Quantity_Sold')} 
+            />
+          }
+        />
       </div>
-      <div className="card">
-        <h3 className="text-2xl font-semibold mb-4 text-medium-blue text-center">Top 10 por Cantidad Vendida</h3>
-        <Bar options={chartOptions} data={createChartData(sortedByQuantity, 'Cantidad Vendida', 'Total_Quantity_Sold')} />
-      </div>
-      <div className="card">
-        <h3 className="text-2xl font-semibold mb-4 text-medium-blue text-center">Top 10 por Ventas Totales</h3>
-        <Bar options={chartOptions} data={createChartData(sortedBySales, 'Ventas Totales', 'Total_Sales')} />
-      </div>
-    </div>
+      
+      <ChartCard
+        title="Top 10 por Ventas Totales"
+        chart={
+          <Bar 
+            options={chartOptions} 
+            data={createChartData(sortedBySales, 'Ventas Totales', 'Total_Sales')} 
+          />
+        }
+        className="col-span-full"
+      />
+    </motion.div>
   )
 }
+
+// Componente de loading simplificado
+const LoadingPlaceholder: React.FC = () => (
+  <div className="space-y-6 p-6">
+    {/* Placeholder para el título */}
+    <div className="h-16 bg-gray-200 rounded-lg animate-pulse" />
+    
+    {/* Placeholders para las KPI cards */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="h-32 bg-gray-200 rounded-lg animate-pulse" />
+      ))}
+    </div>
+    
+    {/* Placeholders para los gráficos */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {[...Array(2)].map((_, i) => (
+        <div key={i} className="h-96 bg-gray-200 rounded-lg animate-pulse" />
+      ))}
+    </div>
+    <div className="h-96 bg-gray-200 rounded-lg animate-pulse" />
+  </div>
+)
+
+// KPICard mejorado
+const KPICard: React.FC<{ title: string; value: string; icon: React.ReactNode }> = ({
+  title,
+  value,
+  icon
+}) => (
+  <motion.div 
+    whileHover={{ scale: 1.02 }}
+    className="bg-white rounded-xl shadow-lg p-6 border border-blue-100 hover:shadow-xl transition-shadow"
+  >
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-lg font-semibold text-blue-800">{title}</h2>
+      <div className="text-blue-600">
+        {icon}
+      </div>
+    </div>
+    <p className="text-3xl font-bold text-gray-800 truncate">{value}</p>
+  </motion.div>
+)
+
+// ChartCard mejorado
+const ChartCard: React.FC<{ 
+  title: string; 
+  chart: React.ReactNode;
+  className?: string;
+}> = ({ title, chart, className }) => (
+  <motion.div 
+    whileHover={{ scale: 1.01 }}
+    className={`bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow ${className}`}
+  >
+    <h3 className="text-2xl font-semibold mb-6 text-blue-800 text-center">{title}</h3>
+    {chart}
+  </motion.div>
+)
 
 export default Dashboard
