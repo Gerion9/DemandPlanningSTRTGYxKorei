@@ -120,6 +120,66 @@ const Reports: React.FC = () => {
     return { monthRow, result, forecastDates };
   };
 
+  const formatMonthlyForecastData = (data: Product[]) => {
+    // Get the weekly forecast data first
+    const { result, forecastDates } = formatForecastData(data);
+    
+    // Create a map to store monthly totals and week counts for each SKU
+    const monthlyTotals: { [key: string]: { [key: string]: { total: number, weeks: number } } } = {};
+    
+    // Process each product's weekly forecasts
+    result.forEach(product => {
+      const sku = product.SKU as string;
+      monthlyTotals[sku] = {};
+      
+      // Group forecasts by month
+      forecastDates.forEach((date, index) => {
+        const dateObj = new Date(date);
+        const monthKey = dateObj.toLocaleString('es-ES', { 
+          month: 'long', 
+          year: 'numeric' 
+        });
+        
+        const monthCapitalized = monthKey.charAt(0).toUpperCase() + monthKey.slice(1);
+        
+        if (!monthlyTotals[sku][monthCapitalized]) {
+          monthlyTotals[sku][monthCapitalized] = { total: 0, weeks: 0 };
+        }
+        
+        monthlyTotals[sku][monthCapitalized].total += Number(product[date] || 0);
+        monthlyTotals[sku][monthCapitalized].weeks += 1;
+      });
+    });
+    
+    // Filter out months with less than 4 weeks of data
+    const validMonths = new Set<string>();
+    Object.values(monthlyTotals).forEach(skuData => {
+      Object.entries(skuData).forEach(([month, data]) => {
+        if (data.weeks >= 4) {
+          validMonths.add(month);
+        }
+      });
+    });
+
+    const months = Array.from(validMonths).sort((a, b) => {
+      const dateA = new Date(a.split(' ')[1] + ' ' + a.split(' ')[0]);
+      const dateB = new Date(b.split(' ')[1] + ' ' + b.split(' ')[0]);
+      return dateA.getTime() - dateB.getTime();
+    });
+    
+    // Convert to array format for Excel, only including complete months
+    const monthlyData = Object.entries(monthlyTotals).map(([sku, monthData]) => {
+      const row: { [key: string]: string | number } = { SKU: sku };
+      months.forEach(month => {
+        const monthData = monthlyTotals[sku][month];
+        row[month] = monthData?.weeks >= 4 ? Math.round(monthData.total) : '';
+      });
+      return row;
+    });
+    
+    return { monthlyData, months };
+  };
+
   const handleExport = async () => {
     try {
       setIsLoading(true);
@@ -318,6 +378,88 @@ const Reports: React.FC = () => {
       // Agregar zoom predeterminado
       inventoryWS['!sheetView'] = [{ zoomScale: 85 }];
       forecastWS['!sheetView'] = [{ zoomScale: 85 }];
+      
+      // Third sheet: Monthly Forecasts
+      const { monthlyData, months } = formatMonthlyForecastData(data);
+      const monthlyWS = utils.json_to_sheet(monthlyData);
+      
+      // Apply styles to monthly forecast sheet
+      const monthlyRange = utils.decode_range(monthlyWS['!ref'] || 'A1');
+      
+      // Header style for monthly sheet
+      const monthlyHeaderStyle = {
+        font: { bold: true, color: { rgb: "FFFFFF" }, name: "Calibri", sz: 12 },
+        fill: { fgColor: { rgb: "2B5BA1" } },
+        alignment: { horizontal: "center", vertical: "center", wrapText: true },
+        border: {
+          top: { style: "medium", color: { rgb: "FFFFFF" } },
+          bottom: { style: "medium", color: { rgb: "FFFFFF" } },
+          left: { style: "medium", color: { rgb: "FFFFFF" } },
+          right: { style: "medium", color: { rgb: "FFFFFF" } }
+        }
+      };
+
+      // Data styles for monthly sheet
+      const monthlyDataStyle = {
+        font: { name: "Calibri", sz: 11 },
+        alignment: { horizontal: "center", vertical: "center" },
+        border: {
+          top: { style: "thin", color: { rgb: "D3D3D3" } },
+          bottom: { style: "thin", color: { rgb: "D3D3D3" } },
+          left: { style: "thin", color: { rgb: "D3D3D3" } },
+          right: { style: "thin", color: { rgb: "D3D3D3" } }
+        }
+      };
+
+      const monthlyNumberStyle = {
+        ...monthlyDataStyle,
+        numFmt: "#,##0",
+        font: { name: "Calibri", sz: 11 }
+      };
+
+      // Apply styles to monthly sheet
+      for (let C = 0; C <= monthlyRange.e.c; C++) {
+        const headerCell = utils.encode_cell({ r: 0, c: C });
+        monthlyWS[headerCell].s = monthlyHeaderStyle;
+
+        for (let R = 1; R <= monthlyRange.e.r; R++) {
+          const cell = utils.encode_cell({ r: R, c: C });
+          const isAlternateRow = R % 2 === 0;
+          
+          if (C === 0) {
+            monthlyWS[cell].s = {
+              ...monthlyDataStyle,
+              fill: { fgColor: { rgb: isAlternateRow ? "F5F5F5" : "FFFFFF" } }
+            };
+          } else {
+            monthlyWS[cell].s = {
+              ...monthlyNumberStyle,
+              fill: { fgColor: { rgb: isAlternateRow ? "F5F5F5" : "FFFFFF" } }
+            };
+          }
+        }
+      }
+
+      // Set column widths
+      monthlyWS['!cols'] = [
+        { wch: 18 }, // SKU
+        ...months.map(() => ({ wch: 20 })) // Month columns
+      ];
+
+      // Set row height
+      monthlyWS['!rows'] = [{ hpt: 25 }]; // Header height
+
+      // Add filters
+      monthlyWS['!autofilter'] = { ref: monthlyWS['!ref'] || 'A1' };
+
+      // Add freeze panes
+      monthlyWS['!freeze'] = { xSplit: 1, ySplit: 1 };
+
+      // Add zoom level
+      monthlyWS['!sheetView'] = [{ zoomScale: 85 }];
+
+      // Add the monthly sheet to the workbook
+      utils.book_append_sheet(workbook, monthlyWS, "Pronósticos Mensuales");
       
       // Propiedades del libro
       workbook.Props = {
