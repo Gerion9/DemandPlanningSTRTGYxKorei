@@ -133,7 +133,7 @@ const Reports: React.FC = () => {
       monthlyTotals[sku] = {};
       
       // Group forecasts by month
-      forecastDates.forEach((date, index) => {
+      forecastDates.forEach(date => {
         const dateObj = new Date(date);
         const monthKey = dateObj.toLocaleString('es-ES', { 
           month: 'long', 
@@ -171,8 +171,8 @@ const Reports: React.FC = () => {
     const monthlyData = Object.entries(monthlyTotals).map(([sku, monthData]) => {
       const row: { [key: string]: string | number } = { SKU: sku };
       months.forEach(month => {
-        const monthData = monthlyTotals[sku][month];
-        row[month] = monthData?.weeks >= 4 ? Math.round(monthData.total) : '';
+        const monthInfo = monthlyTotals[sku][month];
+        row[month] = monthInfo?.weeks >= 4 ? Math.round(monthInfo.total) : '';
       });
       return row;
     });
