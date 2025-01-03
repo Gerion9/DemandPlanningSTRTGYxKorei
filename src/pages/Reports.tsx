@@ -154,8 +154,8 @@ const Reports: React.FC = () => {
     // Filter out months with less than 4 weeks of data
     const validMonths = new Set<string>();
     Object.values(monthlyTotals).forEach(skuData => {
-      Object.entries(skuData).forEach(([month, data]) => {
-        if (data.weeks >= 4) {
+      Object.entries(skuData).forEach(([month, monthInfo]) => {
+        if (monthInfo.weeks >= 4) {
           validMonths.add(month);
         }
       });
@@ -168,7 +168,7 @@ const Reports: React.FC = () => {
     });
     
     // Convert to array format for Excel, only including complete months
-    const monthlyData = Object.entries(monthlyTotals).map(([sku, monthData]) => {
+    const monthlyData = Object.entries(monthlyTotals).map(([sku]) => {
       const row: { [key: string]: string | number } = { SKU: sku };
       months.forEach(month => {
         const monthInfo = monthlyTotals[sku][month];
