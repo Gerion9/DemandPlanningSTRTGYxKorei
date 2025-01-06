@@ -60,6 +60,7 @@ const Login: React.FC = () => {
     if (userEntry) {
       // Autenticación exitosa
       localStorage.setItem('authToken', 'dummy_token');
+      
       localStorage.setItem('userName', userEntry[0]); // Guardamos el nombre del usuario
       navigate('/');
     } else {

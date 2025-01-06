@@ -230,21 +230,6 @@ const AdvancedAnalytics: React.FC = () => {
               let value = context.parsed.y;
               
               if (label === 'Ventas Históricas' && value !== null) {
-<<<<<<< HEAD
-                return `📊 ${label}: ${value.toFixed(2)} unidades`;
-              }
-              if (label === 'Pronóstico' && value !== null) {
-                return `🎯 ${label}: ${value.toFixed(2)} unidades`;
-              }
-              if (label === 'Stock de Seguridad') {
-                return `🛡️ ${label}: ${value.toFixed(2)} unidades`;
-              }
-              if (label === 'Punto de Reorden') {
-                return `⚡ ${label}: ${value.toFixed(2)} unidades`;
-              }
-              if (label === 'Stock Máximo') {
-                return `📦 ${label}: ${value.toFixed(2)} unidades`;
-=======
                 return `📊 ${label}: ${Math.round(value)} unidades`;
               }
               if (label === 'Pronóstico' && value !== null) {
@@ -258,7 +243,6 @@ const AdvancedAnalytics: React.FC = () => {
               }
               if (label === 'Stock Máximo') {
                 return `📦 ${label}: ${Math.round(value)} unidades`;
->>>>>>> 13085a2bf6a838449951e4b9b80ada80dba4316d
               }
               return null;
             }
@@ -404,11 +388,7 @@ const AdvancedAnalytics: React.FC = () => {
               const totalSales = calculateTotalSales(product.Weekly_Sales);
               return (
                 <option key={product.SKU} value={product.SKU}>
-<<<<<<< HEAD
-                  {`${product.SKU} (Ventas totales: ${totalSales.toFixed(0)})`}
-=======
                   {`${product.SKU} (Ventas totales: ${Math.round(totalSales)})`}
->>>>>>> 13085a2bf6a838449951e4b9b80ada80dba4316d
                 </option>
               );
             })}
@@ -444,11 +424,7 @@ const AdvancedAnalytics: React.FC = () => {
                 📊 Coeficiente de Variación
               </h2>
               <p className="text-lg">
-<<<<<<< HEAD
-                {selectedProduct.CV.toFixed(2)}
-=======
                 {Math.round(selectedProduct.CV)}
->>>>>>> 13085a2bf6a838449951e4b9b80ada80dba4316d
                 <span className="text-sm text-gray-500 ml-2">(CV)</span>
               </p>
             </div>
@@ -543,11 +519,7 @@ const AdvancedAnalytics: React.FC = () => {
                 🛡️ Stock de Seguridad
               </h2>
               <p className="text-lg">
-<<<<<<< HEAD
-                {selectedProduct.Stock_Seguridad.toFixed(2)}
-=======
                 {Math.round(selectedProduct.Stock_Seguridad)}
->>>>>>> 13085a2bf6a838449951e4b9b80ada80dba4316d
                 <span className="text-sm text-gray-500 ml-2">unidades</span>
               </p>
             </div>
@@ -556,11 +528,7 @@ const AdvancedAnalytics: React.FC = () => {
                 ⚡ Punto de Reorden
               </h2>
               <p className="text-lg">
-<<<<<<< HEAD
-                {selectedProduct.Punto_Reorden.toFixed(2)}
-=======
                 {Math.round(selectedProduct.Punto_Reorden)}
->>>>>>> 13085a2bf6a838449951e4b9b80ada80dba4316d
                 <span className="text-sm text-gray-500 ml-2">unidades</span>
               </p>
             </div>
@@ -569,11 +537,7 @@ const AdvancedAnalytics: React.FC = () => {
                 📦 Stock Máximo
               </h2>
               <p className="text-lg">
-<<<<<<< HEAD
-                {selectedProduct.Stock_Maximo.toFixed(2)}
-=======
                 {Math.round(selectedProduct.Stock_Maximo)}
->>>>>>> 13085a2bf6a838449951e4b9b80ada80dba4316d
                 <span className="text-sm text-gray-500 ml-2">unidades</span>
               </p>
             </div>
