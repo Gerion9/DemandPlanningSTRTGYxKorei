@@ -29,6 +29,14 @@ ChartJS.register(
 const Dashboard: React.FC = () => {
   const [data, setData] = useState<Product[]>([])
   const [error, setError] = useState<string | null>(null)
+  const userName = localStorage.getItem('userName') || 'Usuario'
+
+  // Función para capitalizar el nombre
+  const formatName = (name: string) => {
+    return name.toLowerCase().split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
 
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
@@ -146,6 +154,22 @@ const Dashboard: React.FC = () => {
       animate={{ opacity: 1 }}
       className="space-y-6 p-6"
     >
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="bg-white rounded-lg p-6 shadow-lg border-l-4 border-medium-blue"
+      >
+        <h2 className="text-2xl font-semibold text-medium-blue">
+          ¡Bienvenida/o{userName !== 'ADMIN' ? `, ${formatName(userName)}` : ' al sistema'}!
+        </h2>
+        <p className="text-gray-600 mt-2">
+          {userName === 'ADMIN' 
+            ? 'Tienes acceso completo a todas las funcionalidades del sistema.'
+            : 'Aquí encontrarás un resumen de los indicadores más importantes.'}
+        </p>
+      </motion.div>
+
       <motion.h1 
         initial={{ y: -20 }}
         animate={{ y: 0 }}
