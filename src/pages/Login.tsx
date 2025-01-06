@@ -2,17 +2,65 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+interface User {
+  email: string;
+  password: string;
+}
+
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const allowedUsers: { [key: string]: User } = {
+    'ADMIN': {
+      email: '',
+      password: 'admin.korei'
+    },
+    'JULIA VALLEJO': {
+      email: 'compras@grupocler.com.mx',
+      password: 'julia.vallejo'
+    },
+    'DARINEL MORENO': {
+      email: 'darinel.moreno@korei.com.mx',
+      password: 'darinel.moreno'
+    },
+    'MANUEL FLORES': {
+      email: 'analistadireccion@korei.com.mx',
+      password: 'manuel.flores'
+    },
+    'CARLOS PROTILLA': {
+      email: 'compras2@korei.com.mx',
+      password: 'carlos.protilla'
+    },
+    'ROGER ENRIQUEZ': {
+      email: 'roger.eqz@grupocler.com.mx',
+      password: 'roger.enriquez'
+    },
+    'JOSE GABRIEL ESQUINCA': {
+      email: 'direccionkorei@grupocler.com.mx',
+      password: 'jose.esquinca'
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === 'STRTGYXKOREI' && password === 'Dashboards') {
+    
+    // Buscar si el usuario existe y verificar sus credenciales
+    const userEntry = Object.entries(allowedUsers).find(([name, user]) => {
+      // Para el admin, solo verificamos el nombre y contraseña
+      if (name === 'ADMIN') {
+        return username === 'ADMIN' && password === user.password;
+      }
+      // Para otros usuarios, verificamos el email y contraseña
+      return (username === user.email || username === name) && password === user.password;
+    });
+
+    if (userEntry) {
       // Autenticación exitosa
       localStorage.setItem('authToken', 'dummy_token');
+      localStorage.setItem('userName', userEntry[0]); // Guardamos el nombre del usuario
       navigate('/');
     } else {
       setError('Nombre de usuario o contraseña incorrectos');
