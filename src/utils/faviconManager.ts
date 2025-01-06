@@ -2,7 +2,7 @@ export const initFaviconChange = () => {
   const favicon = document.getElementById("favicon") as HTMLLinkElement;
   let isOriginal = true;
 
-  const createFaviconSVG = async (phase: number) => {
+  const createFaviconSVG = async () => {
     // Cargar la imagen del favicon usando una ruta absoluta
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -77,7 +77,7 @@ export const initFaviconChange = () => {
         favicon.href = "https://images.squarespace-cdn.com/content/v1/5f1b0ff6550a4d7d70797c8a/3eee20a7-19b4-4c08-a28e-c55b54d93433/favicon.ico";
         await new Promise(resolve => setTimeout(resolve, 100)); // Pequeña pausa
       } else {
-        const newFaviconUrl = await createFaviconSVG(1);
+        const newFaviconUrl = await createFaviconSVG();
         if (newFaviconUrl) {
           const oldUrl = favicon.href;
           favicon.href = newFaviconUrl;
