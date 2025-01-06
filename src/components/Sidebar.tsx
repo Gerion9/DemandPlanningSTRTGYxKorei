@@ -71,7 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, onLogout }) =>
       </div>
       <div className="p-4">
         {isOpen && (
-          <p className="text-sm text-dark-navy text-center mb-2">&copy; 2024 STRTGY</p>
+          <p className="text-sm text-dark-navy text-center mb-2">&copy; 2025 STRTGY</p>
         )}
         <button 
           onClick={onLogout}
