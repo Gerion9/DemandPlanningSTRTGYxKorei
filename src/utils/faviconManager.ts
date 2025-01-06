@@ -28,4 +28,8 @@ export const initFaviconChange = () => {
   return () => {
     clearInterval(intervalId);
   };
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> ad8c05d4c420f0b403023e00adde2c378d5f5acb
