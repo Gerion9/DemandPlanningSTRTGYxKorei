@@ -584,4 +584,8 @@ const Reports: React.FC = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Reports;
+=======
+export default Reports;
+>>>>>>> 13085a2bf6a838449951e4b9b80ada80dba4316d

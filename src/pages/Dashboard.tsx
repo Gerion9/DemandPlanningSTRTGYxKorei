@@ -159,7 +159,11 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <KPICard
           title="Última Actualización"
+<<<<<<< HEAD
           value={lastUpdateDate}
+=======
+          value="20/12/2024"
+>>>>>>> 13085a2bf6a838449951e4b9b80ada80dba4316d
           icon={<ClockIcon className="w-6 h-6" />}
         />
         <KPICard
@@ -276,4 +280,8 @@ const ChartCard: React.FC<{
   </motion.div>
 )
 
+<<<<<<< HEAD
 export default Dashboard
+=======
+export default Dashboard
+>>>>>>> 13085a2bf6a838449951e4b9b80ada80dba4316d
